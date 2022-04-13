@@ -45,4 +45,27 @@ userRouter.post('/user', async (req, res) => {
   }
 });
 
+userRouter.patch('/user/:id', async (req, res) => {
+  try {
+
+    const _id = req.params.id;
+
+    //To verify pwd sent by user is same as encrypted in db.
+    const isUserFound = await User.findOne({ _id });
+
+    const todayDate = new Date()
+
+    if (isUserFound) {
+      const updatedUserData = await User.findByIdAndUpdate(_id, { deleted_at: Date.now() }, { new: true });
+      res.send({ status_code: 200, message: "User deleted successfully!!", data: updatedUserData });
+    } else {
+      res.status(200).send({ status_code: 200, message: "User not found!!" })
+    }
+
+  } catch (error) {
+    console.log("Delete User Error", error.message);
+    res.status(400).send({ status_code: 400, error: error.message });
+  }
+});
+
 module.exports = userRouter;

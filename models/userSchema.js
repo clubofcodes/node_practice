@@ -36,7 +36,7 @@ const userSchema = mongoose.Schema({
         //     },
         //     message: props => `${props.value} is not a valid dob in DD/MM/YYYY format.`
         // },
-        match: [/^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/, 'Enter a valid dob in DD/MM/YYYY format.']
+        match: [/^(0[1-9]|1[0-2])-(0[1-9]|1\d|2\d|3[01])-(19|20)\d{2}$/, 'Enter a valid dob in DD-MM-YYYY format.']
     },
     status: {
         type: Number,
