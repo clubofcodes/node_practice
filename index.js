@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
     // Method-2 : multiple res.write with res.end().
     res.write("Welcome to world of APIs.\n\n");
-    res.write(`To get users list go at http://localhost:${port}/api/users`);
+    res.write(`To get users list go at http://localhost:${port}/api/user`);
     // res.send(); //or
     res.end();
 
@@ -37,6 +37,8 @@ app.get("/", (req, res) => {
 
     // res.close();
 });
+
+app.use(express.json({ extended: false }));
 
 app.use("/api", router.userRouter);
 
