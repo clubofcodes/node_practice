@@ -5,21 +5,26 @@
 
 //Import or include pkg using old way.
 require("dotenv").config();
+
 const express = require("express");
 const app = express();
+
 require("./connections/connect");
+
 //Importing all routes from routes dir.
-const router = require("./routes/index");
+const routes = require("./routes/index");
+// import * as routes from "./routes/index.js";
+
 //Getting port number string from environment variables.
 const port = process.env.PORT || 3000;
 
 //Default route
-app.get("/", (req, res) => {
+app.get("/about", (req, res) => {
     // res.send("Welcome to world of APIs.");
 
     // Method-2 : multiple res.write with res.end().
     res.write("Welcome to world of APIs.\n\n");
-    res.write(`To get users list go at http://localhost:${port}/api/user`);
+    res.write(`To get users list go at http://localhost:${port}/user/getusers`);
     // res.send(); //or
     res.end();
 
@@ -38,8 +43,11 @@ app.get("/", (req, res) => {
     // res.close();
 });
 
-app.use(express.json({ extended: false }));
+app.use(express.json());
 
-app.use("/api", router.userRouter);
+app.use("/", routes);
 
 app.listen(port, () => console.log(`Your app listening at http://localhost:${port}`));
+
+// 6.14.14=>npm -v
+// 14.17.5=>node -v

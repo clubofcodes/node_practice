@@ -13,3 +13,4 @@ node_modules/
 # misc
 .env
 .env.local
+package-lock.json

@@ -11,13 +11,15 @@
     "dotenv": "^16.0.0",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
+    "jade": "^0.29.0",
     "mongoose": "^6.2.10",
     "morgan": "~1.9.1"
   },
   "description": "Code of day to day work in nodejs.",
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.com/rahulj.inexture/node_practice.git"
