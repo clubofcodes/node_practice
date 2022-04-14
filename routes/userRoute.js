@@ -6,7 +6,7 @@ const User = require("../models/userSchema");
 userRouter.get('/user', async (req, res) => {
   try {
     const usersData = await User.find();
-    console.log(usersData);
+    // console.log(usersData);
     usersData.length > 0 ?
       res.status(200).send({ status_code: 200, message: "Fetched all users data.", data: usersData }) :
       res.status(200).send({ status_code: 200, message: "No users found!!" });
