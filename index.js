@@ -1,20 +1,14 @@
 //Import or include pkg Using ES6 module
-// import express from "express";
-// import "./connections/connect";
-// import "dotenv/config";
+import "dotenv/config";
 
-//Import or include pkg using old way.
-require("dotenv").config();
-
-const express = require("express");
+import express from "express";
 const app = express();
 
-//import db connection file.
-require("./connections/connect");
+//imported db connection file.
+import "./connections/connect";
 
 //Importing all routes from routes dir.
-const routes = require("./routes/index");
-// import * as routes from "./routes/index.js";
+import routes from "./routes/index.js";
 
 //Getting port number string from environment variables.
 const port = process.env.PORT || 3000;

@@ -1,8 +1,9 @@
-var routes = require("express").Router();
-// import * as userRouter from "./userRoute.js";
-const userRouter = require('./userRoute');
+import express from "express";
+import * as userRouter from "./userRoute.js";
 
-routes.use("/user", userRouter);
+const routes = express.Router();
 
-// export default routes;
-module.exports = routes;
+//common route for all userRouter APIs
+routes.use("/user", userRouter.default);
+
+export default routes;

@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
 /**
  * user collection schema field declaration with validations.
  */
-const userSchema = mongoose.Schema({
+const userSchema = Schema({
     first_name: {
         type: String,
         required: true,
@@ -67,5 +67,5 @@ const userSchema = mongoose.Schema({
 // Method-2: using set
 // userSchema.set('timestamps', true);
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+const User = model("User", userSchema);
+export default User;
