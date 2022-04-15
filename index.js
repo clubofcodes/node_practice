@@ -48,6 +48,3 @@ app.use(express.json());
 app.use("/", routes);
 
 app.listen(port, () => console.log(`Your app listening at http://localhost:${port}`));
-
-// 6.14.14=>npm -v
-// 14.17.5=>node -v

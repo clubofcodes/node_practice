@@ -63,4 +63,22 @@ const remUsers = (req, res) => {
     }
 }
 
-module.exports = { getUsers, addUsers, remUsers };
+const setUserStatus = async (req, res) => {
+    try {
+
+        const userStatus = await User.findOne({ _id: req.body._id });
+
+        User.findByIdAndUpdate(req.body._id, { status: userStatus.status ? 0 : 1 }, { new: true }, (err, data) => {
+            err ? res.status(400).send({ status_code: 400, error: err }) :
+                data ?
+                    res.send({ status_code: 200, message: "User is inactive!!", data: data }) :
+                    res.status(200).send({ status_code: 200, message: "User not found!!" })
+        });
+
+    } catch (error) {
+        console.log("Delete User Error", error.message);
+        res.status(400).send({ status_code: 400, error: error.message });
+    }
+}
+
+module.exports = { getUsers, addUsers, remUsers, setUserStatus };
