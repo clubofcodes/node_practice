@@ -9,6 +9,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+//import db connection file.
 require("./connections/connect");
 
 //Importing all routes from routes dir.
@@ -18,7 +19,7 @@ const routes = require("./routes/index");
 //Getting port number string from environment variables.
 const port = process.env.PORT || 3000;
 
-//Default route
+//About/Info route
 app.get("/about", (req, res) => {
     // res.send("Welcome to world of APIs.");
 
@@ -43,8 +44,13 @@ app.get("/about", (req, res) => {
     // res.close();
 });
 
+//to get default json format from body.
 app.use(express.json());
 
+//other all routes.
 app.use("/", routes);
 
+/**
+ * listens for connetion on defined port
+ */
 app.listen(port, () => console.log(`Your app listening at http://localhost:${port}`));

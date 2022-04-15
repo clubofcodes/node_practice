@@ -1,11 +1,16 @@
 const User = require("../models/userSchema");
 
+/**
+ * 
+ * @param {*} req nothing.
+ * @param {*} res all users data with deleted_at:null, success/error message and status code.
+ */
 const getUsers = async (req, res) => {
     try {
         const usersData = await User.find();
         // console.log(usersData);
         usersData.length > 0 ?
-            res.status(200).send({ status_code: 200, message: "Fetched all users data.", data: usersData }) :
+            res.status(200).send({ status_code: 200, message: "Fetched all users data.", data: usersData.filter((user) => user.deleted_at === null) }) :
             res.status(200).send({ status_code: 200, message: "No users found!!" });
     } catch (error) {
         console.log("Fetch User Error", error.message);
@@ -13,6 +18,11 @@ const getUsers = async (req, res) => {
     }
 }
 
+/**
+ * 
+ * @param {*} req userSchema fields(first_name, last_name, username, email, dob) from body.
+ * @param {*} res added user data, success/error message and status code.
+ */
 const addUsers = async (req, res) => {
 
     const { first_name, last_name, username, email, dob } = req.body;
@@ -41,6 +51,11 @@ const addUsers = async (req, res) => {
     }
 }
 
+/**
+ * 
+ * @param {*} req user object _id from params.
+ * @param {*} res user data with updated deleted_at timestamp, success/error message and status code.
+ */
 const remUsers = (req, res) => {
     try {
 
@@ -63,6 +78,11 @@ const remUsers = (req, res) => {
     }
 }
 
+/**
+ * 
+ * @param {*} req user object _id from body.
+ * @param {*} res user data with updated status value, success/error message and status code.
+ */
 const setUserStatus = async (req, res) => {
     try {
 

@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 
+/**
+ * user collection schema field declaration with validations.
+ */
 const userSchema = mongoose.Schema({
     first_name: {
         type: String,
