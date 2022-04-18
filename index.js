@@ -15,8 +15,8 @@ import routes from "./routes/index";
 //Getting port number from environment variables.
 const port = common_config.configs.local.port || 3000;
 
-//About/Info route
-app.get("/about", (req, res) => {
+//About/Info default home route.
+app.get("/", (req, res) => {
     // res.send("Welcome to world of APIs.");
 
     // Method-2 : multiple res.write with res.end().
