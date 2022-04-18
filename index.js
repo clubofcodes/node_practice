@@ -1,5 +1,7 @@
-//Import or include pkg Using ES6 module
-import "dotenv/config";
+//Imported or included pkg Using ES6 module
+
+//to fetch default and common configuration such as port variable and other environment variables.
+import * as common_config from "./config/config";
 
 import express from "express";
 const app = express();
@@ -8,10 +10,10 @@ const app = express();
 import "./connections/connect";
 
 //Importing all routes from routes dir.
-import routes from "./routes/index.js";
+import routes from "./routes/index";
 
-//Getting port number string from environment variables.
-const port = process.env.PORT || 3000;
+//Getting port number from environment variables.
+const port = common_config.configs.local.port || 3000;
 
 //About/Info route
 app.get("/about", (req, res) => {
