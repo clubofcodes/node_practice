@@ -15,10 +15,12 @@
 
 Download this project zip or clone:
 
-```bash
-#To clone in local system.
-git clone [https://gitlab.com/rahulj.inexture/node_practice.git](https://gitlab.com/rahulj.inexture/node_practice.git)
+###### To clone in local system.
+- git clone [https://gitlab.com/rahulj.inexture/node_practice.git](https://gitlab.com/rahulj.inexture/node_practice.git)
 
+###### After succesfully clone follow below steps.
+
+```bash
 # Replace proje-dir with directory name.
 cd proje-dir
 
