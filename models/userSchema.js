@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { schema_configs } from "../config/config";
+import { schema_configs } from "../config";
 
 /**
  * user collection schema field declaration with validations.

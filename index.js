@@ -1,10 +1,20 @@
 //Imported or included pkg Using ES6 module
 
 //to fetch default and common configuration such as port variable and other environment variables.
-import * as common_config from "./config/config";
+import * as common_config from "./config";
 
+//imported express to set up a server.
 import express from "express";
 const app = express();
+
+//imported cookie parser to get/set and save cookies.
+import cookieParser from "cookie-parser";
+
+//body parsing middleware used to process data sent through an HTTP request body.
+import bodyparser from "body-parser";
+
+//HTTP server-side framework used to create and manage a session middleware.
+import session from "express-session";
 
 //imported db connection file.
 import "./connections/connect";
@@ -42,6 +52,9 @@ app.get("/", (req, res) => {
 
 //to get default json format from body.
 app.use(express.json());
+
+//Use of cookie in our app
+app.use(cookieParser(""));
 
 //other all routes.
 app.use("/", routes);
