@@ -23,6 +23,13 @@ const userSchema = Schema({
         lowercase: true,
         match: [/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*(\.\w{2,64})+$/, 'Please enter a valid email address!!']
     },
+    password: {
+        ...schema_configs.basic_validators,
+        match: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/,
+            `Must Contain 8 Characters,
+        One Uppercase, One Lowercase,
+        One Number and one special case Character`]
+    },
     dob: {
         ...schema_configs.basic_validators,
         // validate: {

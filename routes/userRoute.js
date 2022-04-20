@@ -8,5 +8,6 @@ routes.post('/adduser', userController.addUser);
 routes.patch('/removeuser/:id', userController.remUser);
 routes.patch('/setstatus/', userController.setUserStatus);
 routes.get('/del_cookie/:key', userController.deleteCookie);
+routes.delete('/del/', userController.deleteall);
 
 export default routes;

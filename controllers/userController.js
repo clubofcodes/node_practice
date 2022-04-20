@@ -24,7 +24,7 @@ export const getUsers = async (req, res) => {
             sameSite: 'Lax' //avoids privacy leaks. such as lax to limit the cookie to same-site requests.
         });
 
-        usersData.length > 0 ?
+        usersData.length ?
             res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Fetched all users data.", data: usersData }) :
             res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "No users found!!" });
     } catch (error) {
@@ -35,32 +35,32 @@ export const getUsers = async (req, res) => {
 
 /**
  * 
- * @param {*} req userSchema fields(first_name, last_name, username, email, dob) from body.
+ * @param {*} req userSchema fields(first_name, last_name, username, email, password, dob) from body.
  * @param {*} res added user data, success/error message and status code.
  */
 export const addUser = async (req, res) => {
 
     //de-structuring req.body fields.
-    const { first_name, last_name, username, email, dob } = req.body;
+    const { first_name, last_name, username, email, password, dob } = req.body;
 
     // console.log(new Date("01/05/1999").toISOString().split('T')[0]); // To get universal format.
     console.log(new Date(dob).toLocaleDateString('en-IN')); // To get Indian format.
 
     //to verify empty field.
-    if (!first_name || !last_name || !username || !email || !dob) {
+    if (!first_name || !last_name || !username || !email || !password || !dob) {
         res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: "Fill all the details" });
     } else {
 
         try {
-            const isUserFound = await User.findOne({ username });
+            const FoundUserData = await User.findOne({ username });
             //to verify user exists.
             if (isUserFound) {
-                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Username already exists, please enter a another username!!", data: isUserFound })
+                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Username already exists, please enter a another username!!", data: FoundUserData })
             } else {
-                const newUserData = new User({ first_name, last_name, username, email, dob });
+                const newUserData = new User({ first_name, last_name, username, email, password, dob });
                 await newUserData.save();
 
-                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "User added successfully!!", data: newUserData });
+                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "User registered successfully!!", data: newUserData });
             }
         } catch (error) {
             console.log("Add User Error", error.message);
@@ -122,6 +122,16 @@ export const deleteCookie = (req, res) => {
         const cookie_name = req.params.key; // del_cookie/:key params value.
         res.clearCookie(cookie_name);
         res.send({ status_code: all_config.status_codes.ok, message: `Cookie ${cookie_name} has been deleted successfully` });
+    } catch (error) {
+        res.send({ status_code: all_config.status_codes.bad, error: error.message });
+    }
+}
+
+
+export const deleteall = async (req, res) => {
+    try {
+        await User.deleteMany({});
+        res.send({ status_code: all_config.status_codes.ok, message: 'All user deleted successfully!!' });
     } catch (error) {
         res.send({ status_code: all_config.status_codes.bad, error: error.message });
     }
