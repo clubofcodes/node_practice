@@ -2,9 +2,6 @@ import * as all_config from "../config";
 import User from "../models/userSchema";
 import * as common_query from "../service/common";
 
-//object variable containing required status code in api.
-// const status_codes = { ok: all_config.status_codes.ok, err: all_config.status_codes.bad };
-
 /**
  * 
  * @param {*} req nothing.
@@ -15,6 +12,18 @@ export const getUsers = async (req, res) => {
     try {
         const usersData = await User.find({ deleted_at: null });
         // console.log(usersData);
+
+        //adding a cookie. 
+        //used maxAge and expires both, cause some browser doesn't support maxAge.
+        res.cookie('collection_size', usersData?.length, {
+            // path: '/user/getusers',//sets path to which it belongs.
+            maxAge: 60000, //sets time when to delete, take value in mili(1k=1sec).
+            expires: new Date(Date.now() + 6000), //sets date when to delete.
+            secure: true, //can only be transferred over secure/HTTPS
+            httpOnly: true, //cannot be read or modified by the browser
+            sameSite: 'Lax' //avoids privacy leaks. such as lax to limit the cookie to same-site requests.
+        });
+
         usersData.length > 0 ?
             res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Fetched all users data.", data: usersData }) :
             res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "No users found!!" });
@@ -29,7 +38,7 @@ export const getUsers = async (req, res) => {
  * @param {*} req userSchema fields(first_name, last_name, username, email, dob) from body.
  * @param {*} res added user data, success/error message and status code.
  */
-export const addUsers = async (req, res) => {
+export const addUser = async (req, res) => {
 
     //de-structuring req.body fields.
     const { first_name, last_name, username, email, dob } = req.body;
@@ -65,7 +74,7 @@ export const addUsers = async (req, res) => {
  * @param {*} req user object _id from params.
  * @param {*} res user data with updated deleted_at timestamp, success/error message and status code.
  */
-export const remUsers = (req, res) => {
+export const remUser = (req, res) => {
     try {
         const todayTimeStamp = new Date();
         //to add GMT +5:30hrs in currentTimeStamp.
@@ -100,6 +109,21 @@ export const setUserStatus = async (req, res) => {
     } catch (error) {
         console.log("Delete User Error", error.message);
         res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: error.message });
+    }
+}
+
+/**
+ * delete the saved cookie.
+ * @param {*} req request arguments to get param value.
+ * @param {*} res success/error message and status code.
+ */
+export const deleteCookie = (req, res) => {
+    try {
+        const cookie_name = req.params.key; // del_cookie/:key params value.
+        res.clearCookie(cookie_name);
+        res.send({ status_code: all_config.status_codes.ok, message: `Cookie ${cookie_name} has been deleted successfully` });
+    } catch (error) {
+        res.send({ status_code: all_config.status_codes.bad, error: error.message });
     }
 }
 

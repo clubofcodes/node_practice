@@ -25,15 +25,30 @@ import routes from "./routes/index";
 //Getting port number from environment variables.
 const port = common_config.configs.local.port || 3000;
 
+//to get default json format from body.
+app.use(express.json());
+
+//Use of cookie in our app
+app.use(cookieParser(""));
+
 //About/Info default home route.
 app.get("/", (req, res) => {
     // res.send("Welcome to world of APIs.");
 
     // Method-2 : multiple res.write with res.end().
-    res.write("Welcome to world of APIs.\n\n");
-    res.write(`To get users list go at http://localhost:${port}/user/getusers`);
-    // res.send(); //or
-    res.end();
+    // res.write("Welcome to world of APIs.\n\n");
+    // res.write(`To get users list go at http://localhost:${port}/user/getusers`);
+    // res.end();
+
+    // console.log(Object.keys(req.cookies).length);
+    //Instructions object with cookies
+    const response = {
+        Title: "Welcome to world of APIs.",
+        Info: "To get users list go to below address.",
+        Route: `http://localhost:${port}/user/getusers`,
+        Cookies: Object.keys(req.cookies).length ? req.cookies : "No cookies available."
+    }
+    res.send(response); //or
 
     //Method-3 : multiple res.write with res.close().
     // var i = 1, max = 5;
@@ -49,12 +64,6 @@ app.get("/", (req, res) => {
 
     // res.close();
 });
-
-//to get default json format from body.
-app.use(express.json());
-
-//Use of cookie in our app
-app.use(cookieParser(""));
 
 //other all routes.
 app.use("/", routes);
