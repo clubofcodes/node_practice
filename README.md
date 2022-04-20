@@ -4,6 +4,7 @@
 
 - This branch contains basic APIs which can perform simple CRUD operations in USER collection of local mongoDB as well as cloud mongodb cluster.
 - Store info branch contains demo of cookies and sessions.
+- In Auth branch, added password field in user schema which will be encrypted and user authorization using same.
 
 ## Features
 
