@@ -3,6 +3,7 @@
 ## About
 
 - This branch contains basic APIs which can perform simple CRUD operations in USER collection of local mongoDB as well as cloud mongodb cluster.
+- Store info branch contains demo of cookies and sessions.
 
 ## Features
 
@@ -10,6 +11,7 @@
 - `(POST HTTP Method)` Add user(first_name, last_name, username, email, dob, status) with validations and timestamps.
 - `(Patch HTTP Method via params)` Update user deleted_at to current timestamp which will behave as deleted data.
 - `(Patch HTTP Method via body)` To set user status as active to inactive or vice-versa.
+- `(Get HTTP Method)` To set user collection size in cookie.
 
 ## Installation
 
