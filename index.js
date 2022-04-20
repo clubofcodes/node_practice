@@ -1,5 +1,8 @@
 //Imported or included pkg Using ES6 module
 
+//imported db connection file.
+import "./connections/connect";
+
 //to fetch default and common configuration such as port variable and other environment variables.
 import * as common_config from "./config";
 
@@ -15,9 +18,6 @@ import bodyparser from "body-parser";
 
 //HTTP server-side framework used to create and manage a session middleware.
 import session from "express-session";
-
-//imported db connection file.
-import "./connections/connect";
 
 //Importing all routes from routes dir.
 import routes from "./routes/index";

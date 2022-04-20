@@ -25,10 +25,10 @@ const userSchema = Schema({
     },
     password: {
         ...schema_configs.basic_validators,
-        match: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/,
-            `Must Contain 8 Characters,
-        One Uppercase, One Lowercase,
-        One Number and one special case Character`]
+        // match: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/,
+        //     `Must Contain 8 Characters,
+        // One Uppercase, One Lowercase,
+        // One Number and one special case Character`]
     },
     dob: {
         ...schema_configs.basic_validators,
