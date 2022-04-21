@@ -10,7 +10,8 @@ import * as common_query from "../service/common";
  */
 export const getUsers = async (req, res) => {
     try {
-        const usersData = await User.find({ deleted_at: null });
+        //find accepts 2 params: first for query(where) and second is for projection to omit any field.
+        const usersData = await User.find({ deleted_at: null }, { password: 0 });
         // console.log(usersData);
 
         //adding a cookie. 
@@ -52,10 +53,10 @@ export const addUser = async (req, res) => {
     } else {
 
         try {
-            const FoundUserData = await User.findOne({ username });
+            const foundUserData = await User.findOne({ username });
             //to verify user exists.
-            if (isUserFound) {
-                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Username already exists, please enter a another username!!", data: FoundUserData })
+            if (foundUserData) {
+                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Username already exists, please enter a another username!!", data: foundUserData })
             } else {
                 const newUserData = new User({ first_name, last_name, username, email, password, dob });
                 await newUserData.save();

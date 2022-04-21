@@ -21,10 +21,10 @@ const signUp = async (req, res) => {
     else {
 
         try {
-            const isUserFound = await User.findOne({ username });
+            const foundUserData = await User.findOne({ username });
             //to verify user exists.
-            if (isUserFound) {
-                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Username already exists, please enter a another username!!", data: isUserFound })
+            if (foundUserData) {
+                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Username already exists, please enter a another username!!", data: foundUserData })
             } else {
                 // generate salt to hash password till 10 rounds.
                 const salt = await bcrypt.genSalt(10);
@@ -56,13 +56,16 @@ const signIn = async (req, res) => {
     } else {
         try {
             //to verify user either by username or email.
-            const logedInUser = await User.findOne({ username }) || await User.findOne({ email: username });
-            if (logedInUser) {
+            const loggedInUser = await User.findOne({ username }) || await User.findOne({ email: username });
+            const withoutPwdUserData = await User.findOne({ username }, { password: 0 }) || await User.findOne({ email: username }, { password: 0 });
+            
+            if (loggedInUser) {
                 //to verify req.body password with db password.
-                const isMatch = await bcrypt.compare(password, logedInUser.password);
+                const isMatch = await bcrypt.compare(password, loggedInUser.password);
+
                 !isMatch ?
                     res.status(all_config.status_codes.auth).send({ status_code: all_config.status_codes.auth, error: "Invalid Credentials" }) :
-                    res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "User logged in successfully!!", data: logedInUser });
+                    res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "User logged in successfully!!", data: withoutPwdUserData });
             } else res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, error: "User doesn't exist!!" });
         } catch (error) {
             res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: error.message });
