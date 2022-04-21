@@ -1,6 +1,7 @@
-import * as all_config from "../config";
+import { status_codes } from "../config";
 import User from "../models/userSchema";
 import * as common_query from "../service/common";
+import responseFunction from "../utils/responseFunction";
 
 /**
  * 
@@ -26,11 +27,11 @@ export const getUsers = async (req, res) => {
         });
 
         usersData.length ?
-            res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Fetched all users data.", data: usersData }) :
-            res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "No users found!!" });
+            res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Fetched all users data.", usersData)) :
+            res.status(status_codes.ok).send(responseFunction(true, status_codes.ok, "No user found!!"));
     } catch (error) {
         console.log("Fetch User Error", error.message);
-        res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: error.message });
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
     }
 }
 
@@ -49,23 +50,24 @@ export const addUser = async (req, res) => {
 
     //to verify empty field.
     if (!first_name || !last_name || !username || !email || !password || !dob) {
-        res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: "Fill all the details" });
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Fill all the details"));
     } else {
 
         try {
             const foundUserData = await User.findOne({ username });
             //to verify user exists.
             if (foundUserData) {
-                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "Username already exists, please enter a another username!!", data: foundUserData })
+                res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Username already exists, please enter a another username!!", foundUserData))
             } else {
                 const newUserData = new User({ first_name, last_name, username, email, password, dob });
+
                 await newUserData.save();
 
-                res.status(all_config.status_codes.ok).send({ status_code: all_config.status_codes.ok, message: "User registered successfully!!", data: newUserData });
+                res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "User added successfully!!", newUserData));
             }
         } catch (error) {
             console.log("Add User Error", error.message);
-            res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: error.message });
+            res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
         }
     }
 }
@@ -86,11 +88,11 @@ export const remUser = (req, res) => {
 
         const msg = { ok: "User deleted successfully!!", err: "User not found!!" };
         //calling find_Update method from config to update deleted_at using findByIdAndUpdate.
-        common_query.find_Update(User, req.params.id, "deleted_at", todayTimeStamp, res, all_config.status_codes, msg);
+        common_query.find_Update(User, req.params.id, "deleted_at", todayTimeStamp, res, status_codes, msg);
 
     } catch (error) {
         console.log("Delete User Error", error.message);
-        res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: error.message });
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
     }
 }
 
@@ -105,11 +107,11 @@ export const setUserStatus = async (req, res) => {
 
         const msg = { ok: `User is ${userStatus.status ? "InActive!!" : "Active!!"}`, err: "User not found!!" }
         //calling find_Update method from config to update status using findByIdAndUpdate.
-        common_query.find_Update(User, req.body._id, "status", userStatus.status ? 0 : 1, res, all_config.status_codes, msg);
+        common_query.find_Update(User, req.body._id, "status", userStatus.status ? 0 : 1, res, status_codes, msg);
 
     } catch (error) {
         console.log("Delete User Error", error.message);
-        res.status(all_config.status_codes.bad).send({ status_code: all_config.status_codes.bad, error: error.message });
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
     }
 }
 
@@ -121,20 +123,30 @@ export const setUserStatus = async (req, res) => {
 export const deleteCookie = (req, res) => {
     try {
         const cookie_name = req.params.key; // del_cookie/:key params value.
+
         res.clearCookie(cookie_name);
-        res.send({ status_code: all_config.status_codes.ok, message: `Cookie ${cookie_name} has been deleted successfully` });
+
+        res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Cookie ${cookie_name} has been deleted successfully`));
+        
     } catch (error) {
-        res.send({ status_code: all_config.status_codes.bad, error: error.message });
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
     }
 }
 
-
+/**
+ * 
+ * @param {*} req does nothing.
+ * @param {*} res success/error message and status code.
+ */
 export const deleteall = async (req, res) => {
     try {
+
         await User.deleteMany({});
-        res.send({ status_code: all_config.status_codes.ok, message: 'All user deleted successfully!!' });
+
+        res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "All user deleted successfully!!"));
+
     } catch (error) {
-        res.send({ status_code: all_config.status_codes.bad, error: error.message });
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
     }
 }
 
