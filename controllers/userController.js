@@ -8,31 +8,30 @@ import { securePassword } from "../utils/securePassword";
 /**
  * 
  * @param {*} req nothing.
- * @param {*} res all users data with deleted_at:null, success/error message and status code.
+ * @param {*} res logged in user's username, all available users data, success/error message and status code.
  * Author: Rahul Jagetia 
  */
 export const getUsers = async (req, res) => {
     try {
         //find accepts 2 params: first for query(where) and second is for projection to omit any field.
-        const usersData = await User.find({ deleted_at: null }, { password: 0 });
-        const delUsersData = await User.find({}, { password: 0 });
-        // console.log(usersData);
+        const availableUsers = await User.find({ deleted_at: null }, { password: 0 });
+        const allUsersData = await User.find({}, { password: 0 });
+        // console.log(req.loggedInUser);
 
         //adding a cookie. 
         //used maxAge and expires both, cause some browser doesn't support maxAge.
-        res.cookie('Available_Users', usersData?.length, {
+        res.cookie('Available_Users', availableUsers?.length, {
             // path: '/user/getusers',//sets path to which it belongs.
             maxAge: 60000, //sets time when to delete, take value in mili(1k=1sec).
             expires: new Date(Date.now() + 6000), //sets date when to delete.
             secure: true, //can only be transferred over secure/HTTPS
             httpOnly: true, //cannot be read or modified by the browser
             sameSite: 'Lax' //avoids privacy leaks. such as lax to limit the cookie to same-site requests.
-        }).cookie('Deleted_Users', delUsersData?.length - usersData?.length, { maxAge: 60000 }).cookie('Total_Users', delUsersData?.length, { maxAge: 60000 });
+        }).cookie('Deleted_Users', allUsersData?.length - availableUsers?.length, { maxAge: 60000 }).cookie('Total_Users', allUsersData?.length, { maxAge: 60000 });
 
-        usersData.length ?
-            res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Fetched all available users data!!", usersData))
+        availableUsers.length ?
+            res.status(status_codes.ok).send({ 'Authorized_by': req.loggedInUser.username, ...responseFunction(false, status_codes.ok, "Fetched all available users data!!", availableUsers) })
             : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "No user found!!"));
-
     } catch (error) {
         console.log("Fetch User Error", error.message);
         res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));

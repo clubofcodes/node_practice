@@ -1,8 +1,9 @@
-import { status_codes } from "../config";
+import { JWT_KEY, status_codes } from "../config";
 import User from "../models/userSchema";
 import responseFunction from "../utils/responseFunction";
 import { isEmpty, isPwdValid } from "../utils/schemaValidator";
 import { securePassword, comparePassword } from "../utils/securePassword";
+import jwt from "jsonwebtoken";
 
 /**
  * 
@@ -58,17 +59,27 @@ const signIn = async (req, res) => {
         res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Fill all the details."));
     } else {
         try {
-            //to verify user either by username or email.
+            // to verify user either by username or email.
             const loggedInUser = await User.findOne({ username }) || await User.findOne({ email: username });
             const withoutPwdUserData = await User.findOne({ username }, { password: 0 }) || await User.findOne({ email: username }, { password: 0 });
 
             if (loggedInUser && loggedInUser.status === 0) {
                 res.status(status_codes.auth).send(responseFunction(false, status_codes.ok, "Your account is blocked!!", withoutPwdUserData))
             } else if (loggedInUser && !loggedInUser.deleted_at) {
+                // to verify password matches with the db password.
+                if (!await comparePassword(password, loggedInUser.password)) res.status(status_codes.auth).send(responseFunction(true, status_codes.auth, "Invalid Credentials."))
+                else {
 
-                !await comparePassword(password, loggedInUser.password) ?
-                    res.status(status_codes.auth).send(responseFunction(true, status_codes.auth, "Invalid Credentials."))
-                    : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "User logged in successfully!!", withoutPwdUserData));
+                    // to share security information between two parties — a client and a server.
+                    // generates the token string madeup of 3 parts(header, payload, Key)
+                    const jwtToken = jwt.sign({_id: loggedInUser._id}, JWT_KEY);
+                    // console.log(jwtToken);
+
+                    // passes token to header.
+                    res.header("auth-token", jwtToken);
+
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "User logged in successfully!!", withoutPwdUserData));
+                }
 
             } else res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "User doesn't exist!!"));
         } catch (error) {

@@ -1,9 +1,10 @@
 import express from 'express';
 import * as userController from "../controllers/userController";
+import verifyToken from '../middleware/verifyToken';
 
 const routes = express.Router();
 
-routes.get('/getusers', userController.getUsers);
+routes.get('/getusers', verifyToken, userController.getUsers);
 routes.post('/adduser', userController.addUser);
 routes.patch('/removeuser/:id', userController.remUser);
 routes.patch('/setstatus/', userController.setUserStatus);

@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
     // res.write(`To get users list go at http://localhost:${port}/user/getusers`);
     // res.end();
 
-    // console.log(Object.keys(req.cookies).length);
+    console.log(req.cookies);
     //Instructions object with cookies
     const response = {
         Title: "Welcome to world of APIs.",
