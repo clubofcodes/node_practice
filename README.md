@@ -1,18 +1,21 @@
-# CRUD - Operations
+# Mail Sender
 
 ## About
 
-- This branch contains basic APIs which can perform simple CRUD operations in USER collection of local mongoDB as well as cloud mongodb cluster.
+- CRUD branch contains basic APIs which can perform simple CRUD operations in USER collection of local mongoDB as well as cloud mongodb cluster.
 - Store info branch contains demo of cookies and sessions.
-- In Auth branch, added password field in user schema which will be encrypted and user authorization using same.
+- In Auth branch, added password field in user schema which will be encrypted and used for authorization.
+- Mail branch will be helpful to send mail using nodemailer npm package.
 
 ## Features
 
 - `(Get HTTP Method)` Get all active users which has null value in deleted_at field.
-- `(POST HTTP Method)` Add user(first_name, last_name, username, email, dob, status) with validations and timestamps.
+- `(Post HTTP Method)` Add user(first_name, last_name, username, email, dob, status) with validations and timestamps.
 - `(Patch HTTP Method via params)` Update user deleted_at to current timestamp which will behave as deleted data.
 - `(Patch HTTP Method via body)` To set user status as active to inactive or vice-versa.
-- `(Get HTTP Method)` To set user collection size in cookie.
+- `(Get HTTP Method)` To set type of user's(available, deleted and total) quantity in cookie.
+- `(Post HTTP Method)` - User registration with encrypted password field and user login which will generate token to access authorized routes.
+- `(Post HTTP Method)` - To send mail.
 
 ## Installation
 
