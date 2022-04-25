@@ -28,6 +28,10 @@ const port = common_config.configs.local.port || 3000;
 //to get default json format from body.
 app.use(express.json());
 
+//body parser middleware.
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
+
 //Use of cookie in our app
 app.use(cookieParser(""));
 
