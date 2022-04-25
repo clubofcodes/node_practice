@@ -1,5 +1,6 @@
 import { status_codes } from "../config";
 import Product from "../models/productSchema";
+import { find_Update } from "../service/common";
 import responseFunction from "../utils/responseFunction";
 import { isEmpty } from "../utils/schemaValidator";
 
@@ -56,4 +57,35 @@ const addProduct = async (req, res) => {
     }
 }
 
-export { getProducts, addProduct };
+/**
+ * to update product single or multi fields.
+ * @param {*} req product's object _id and fields to update from body.
+ * @param {*} res updated product's data, success/error message and status code.
+ */
+const updateProduct = async (req, res) => {
+    if (isEmpty(req.body?._id)) {
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Enter user object_id to update product."));
+    }
+    else {
+        try {
+            //to verify product exists.
+            const foundProductData = await Product.findOne({ _id: req.body._id });
+            if (!foundProductData) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Product not available."));
+            else {
+                //de-structuring req.body fields to remove _id from update.
+                const { _id: obj_id, ...withoutObjIdData } = req.body;
+
+                //calling find_Update method from config to update product using findByIdAndUpdate.
+                const updatedData = await find_Update(Product, req.body._id, withoutObjIdData);
+
+                updatedData &&
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Product Updated!!", updatedData));
+            }
+
+        } catch (error) {
+            res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+        }
+    }
+}
+
+export { getProducts, addProduct, updateProduct };

@@ -11,13 +11,18 @@ import responseFunction from "../utils/responseFunction"
  * @param {*} msg specific msg to send in response.
  * Author: Rahul Jagetia
  */
-export const find_Update = (model, id, field_key, value, res, code, msg) => {
+// export const find_Update = (model, id, field_key, value, res, code, msg) => {
+export const find_Update = async (model, id, updateData) => {
 
-    model.findByIdAndUpdate(id, { [field_key]: value }, { new: true, select: { password: 0 } }, (error, data) => {
+    //for user APIs.
+    //     model.findByIdAndUpdate(id, { [field_key]: value }, { new: true, select: { password: 0 } }, (error, data) => {
 
-        error ? res.status(code.bad).send(responseFunction(true, code.bad, error)) :
-            data && res.status(code.ok).send(responseFunction(false, code.ok, msg.ok, data))
+    //         error ? res.status(code.bad).send(responseFunction(true, code.bad, error)) :
+    //             data && res.status(code.ok).send(responseFunction(false, code.ok, msg.ok, data))
 
-    })
+    //     })
     // .select({ password: 0 }); //Method - 2
+
+    //for product APIs.
+    return await model.findByIdAndUpdate(id, updateData, { new: true });
 }
