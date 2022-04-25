@@ -70,7 +70,7 @@ const updateProduct = async (req, res) => {
         try {
             //to verify product exists.
             const foundProductData = await Product.findOne({ _id: req.body._id });
-            if (!foundProductData) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Product not available."));
+            if (!foundProductData) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "There is no such product."));
             else {
                 //de-structuring req.body fields to remove _id from update.
                 const { _id: obj_id, ...withoutObjIdData } = req.body;
@@ -88,4 +88,23 @@ const updateProduct = async (req, res) => {
     }
 }
 
-export { getProducts, addProduct, updateProduct };
+/**
+ * to delete data by params id only.
+ * @param {*} req request argument to get user's object _id value from params.
+ * @param {*} res deleted product's name, success/error message and status code.
+ */
+ const delOneProduct = async (req, res) => {
+    try {
+
+        const delProductData = await Product.findByIdAndDelete(req.params.id);
+
+        delProductData ?
+            res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `<${delProductData?.product_name}> deleted successfully!!`))
+            : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "There is no such product."));
+
+    } catch (error) {
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+    }
+}
+
+export { getProducts, addProduct, updateProduct, delOneProduct };
