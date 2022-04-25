@@ -1,4 +1,4 @@
-# Mail Sender
+# Product APIs
 
 ## About
 
@@ -6,6 +6,7 @@
 - Store info branch contains demo of cookies and sessions.
 - In Auth branch, added password field in user schema which will be encrypted and used for authorization.
 - Mail branch will be helpful to send mail using nodemailer npm package.
+- Listing of all products with other CRUD operations of product. Even Quantity of product remaining and sold out.
 
 ## Features
 
