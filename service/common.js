@@ -24,5 +24,5 @@ export const find_Update = async (model, id, updateData) => {
     // .select({ password: 0 }); //Method - 2
 
     //for product APIs.
-    return await model.findByIdAndUpdate(id, updateData, { new: true });
+    // return await model.findByIdAndUpdate(id, updateData, { new: true });
 }

@@ -12,6 +12,7 @@ const productSchema = Schema({
     },
     product_name: {
         ...schema_configs.basic_validators,
+        unique: true
     },
     description: {
         ...schema_configs.basic_validators,
