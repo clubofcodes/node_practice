@@ -44,6 +44,10 @@ const userSchema = Schema({
         },
         default: schema_configs.enum_val.active
     },
+    role: {
+        type: [String],
+        default: ["customer"]
+    },
     deleted_at: {
         type: Date,
         default: null

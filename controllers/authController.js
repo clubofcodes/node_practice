@@ -15,7 +15,7 @@ import mailOptions from "../utils/mailOptions";
 const signUp = async (req, res) => {
 
     //de-structuring req.body fields.
-    const { first_name, last_name, username, email, password, c_pwd, dob, mail_sub, mail_greet, mail_msg } = req.body;
+    const { first_name, last_name, username, email, password, c_pwd, dob, mail_sub, mail_greet, mail_msg, role, send_mail } = req.body;
 
     //to verify empty field.
     if (isEmpty(first_name, last_name, username, email, password, c_pwd, dob)) {
@@ -35,12 +35,12 @@ const signUp = async (req, res) => {
                 res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Username already exists, please enter a another username!!", foundUserData))
             } else {
 
-                const newUserData = new User({ first_name, last_name, username, email, password: await securePassword(password), dob });
+                const newUserData = new User({ first_name, last_name, username, email, password: await securePassword(password), dob, role });
 
                 await newUserData.save();
 
                 // service call to send mail and passed mailOptions as argument from utils.
-                await sendAMail(mailOptions(email, mail_sub, mail_greet, first_name, last_name, mail_msg));
+                send_mail && await sendAMail(mailOptions(email, mail_sub, mail_greet, first_name, last_name, mail_msg));
 
                 const { password: hiddenPwd, ...withoutPwdUserData } = newUserData._doc;
 
@@ -58,10 +58,12 @@ const signUp = async (req, res) => {
  * @param {*} res logged in user data, success/error message and status code.
  */
 const signIn = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
 
-    if (isEmpty(username, password)) {
+    if (isEmpty(username, password, role)) {
         res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Fill all the details."));
+    }else if(typeof role !== 'string'){
+        res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Only string type is allowed for role."));
     } else {
         try {
             // to verify user either by username or email.
@@ -72,8 +74,10 @@ const signIn = async (req, res) => {
                 res.status(status_codes.auth).send(responseFunction(false, status_codes.ok, "Your account is blocked!!", withoutPwdUserData))
             } else if (loggedInUser && !loggedInUser.deleted_at) {
                 // to verify password matches with the db password.
-                if (!await comparePassword(password, loggedInUser.password)) res.status(status_codes.auth).send(responseFunction(true, status_codes.auth, "Invalid Credentials."))
-                else {
+                if (!await comparePassword(password, loggedInUser.password)) res.status(status_codes.auth).send(responseFunction(true, status_codes.auth, "Invalid Credentials."));
+                else if (!loggedInUser.role.includes(role.toLowerCase())) {
+                    res.status(status_codes.auth).send(responseFunction(true, status_codes.auth, "You do not have access to the page you requested."))
+                } else {
 
                     // to share security information between two parties — a client and a server.
                     // generates the token string madeup of 3 parts(header, payload, Key)
