@@ -63,7 +63,7 @@ const addProduct = async (req, res) => {
  * @param {*} res sends updated product's data if product is updated, success/error message and status code.
  */
 const updateProduct = async (req, res) => {
-    if (isEmpty(req.body?._id) && isEmpty(req.body?.id)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Enter product id or object_id to update product."))
+    if (isEmpty(req.body?._id) && isEmpty(req.body?.id)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Enter product id or object_id to update product."));
     else {
 
         try {
@@ -81,12 +81,14 @@ const updateProduct = async (req, res) => {
                 // //checks that incoming data is same or new.
                 // if (matchedProductData.length) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Got same data, No document was updated."));
                 // else {
+                //to check product is removed then don't update.
+                if (!foundProductData.deleted_at) {
+                    const updatedData = await Product.findByIdAndUpdate(req.body._id || foundProductData._id, withoutIdData, { new: true });
 
-                //calling find_Update method from config to update product using findByIdAndUpdate.
-                const updatedData = await find_Update(Product, req.body._id || foundProductData._id, withoutIdData);
+                    updatedData &&
+                        res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Product Updated!!", updatedData));
+                } else res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "You are trying to update removed product."));
 
-                updatedData &&
-                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Product Updated!!", updatedData));
                 // }
             }
 
@@ -114,10 +116,13 @@ const remProduct = async (req, res) => {
             if (!foundProductData) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "There is no such product."));
             else {
                 // console.log(calc.currentTimeStamp());
-                const updatedData = await Product.findByIdAndUpdate(req.body._id || foundProductData._id, { deleted_at: calc.currentTimeStamp() }, { new: true });
+                // to check product is removed then don't let remove and update delete_at with currentTimeStamp.
+                if (!foundProductData.deleted_at) {
+                    const updatedData = await Product.findByIdAndUpdate(req.body._id || foundProductData._id, { deleted_at: calc.currentTimeStamp() }, { new: true });
 
-                updatedData &&
-                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Product removed!!", updatedData));
+                    updatedData &&
+                        res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `<${updatedData?.product_name}> Product is removed!!`, updatedData));
+                } else res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Product is already removed on <${calc.remDateGMT(foundProductData.deleted_at.toString())}> .`));
             }
 
         } catch (error) {
