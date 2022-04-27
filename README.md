@@ -6,7 +6,8 @@
 - Store info branch contains demo of cookies and sessions.
 - In Auth branch, added password field in user schema which will be encrypted and used for authorization.
 - Mail branch will be helpful to send mail using nodemailer npm package.
-- Listing of all products with other CRUD operations of product. Even Quantity of product remaining and sold out.
+- Listing of all products with other CRUD operations in product branch. Even remaining and sold out quantity of product.
+- User_role branch manages the login route for admin and customer.
 
 ## Features
 
