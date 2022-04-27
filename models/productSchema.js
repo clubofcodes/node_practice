@@ -46,7 +46,8 @@ const productSchema = Schema({
     },
     sold_quantity: {
         type: Number,
-        ...schema_configs.basic_validators
+        ...schema_configs.basic_validators,
+        default: 0
     },
     product_origin: {
         ...schema_configs.basic_validators
