@@ -8,6 +8,7 @@
 - Mail branch will be helpful to send mail using nodemailer npm package.
 - Listing of all products with other CRUD operations in product branch. Even remaining and sold out quantity of product.
 - User_role branch manages the login route for admin and customer.
+- Implementing orders related APIs in order branch.
 
 ## Features
 
