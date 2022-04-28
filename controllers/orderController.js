@@ -22,7 +22,31 @@ const orderController = {
             console.log("Order Fetch Error", error.message);
             res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
         }
-    }
+    },
+
+    /**
+     * @param {*} req to get orderSchema fields from body. 
+     * @param {*} res sends added product's data, success/error message and status code.
+     */
+    addOrder: async (req, res) => {
+
+        //de-structuring req.body fields.
+        const { p_id, u_id } = req.body;
+
+        //to verify empty field.
+        if (isEmpty(p_id, u_id)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Both user and product id are required."));
+        else {
+
+            try {
+                const newOrderData = await Order.create({ p_id, u_id });
+
+                res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Order added successfully!!", newOrderData));
+            } catch (error) {
+                console.log("Add Order Error", error.message);
+                res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+            }
+        }
+    },
 }
 
 export default orderController;
