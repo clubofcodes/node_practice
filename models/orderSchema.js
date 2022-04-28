@@ -1,17 +1,17 @@
 import { Schema, model } from "mongoose";
-import { schema_configs } from "../config";
 
 /**
- * order collection schema field declaration with validations.
+ * order collection schema field declaration with ref to other collections.
  */
 const orderSchema = Schema({
-    p_id: {
-        ...schema_configs.basic_validators,
-        unique: true
-    },
     u_id: {
-        ...schema_configs.basic_validators,
-        unique: true
+        type: Schema.Types.ObjectId,
+        unique:true,
+        ref: 'User'
+    }, 
+    p_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
     }
 }, {
     timestamps: {
