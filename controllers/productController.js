@@ -11,17 +11,21 @@ const productController = {
      * Author: Rahul Jagetia 
      */
     getProducts: async (req, res) => {
-        try {
-            //find accepts 2 params: first for query(where) and second is for projection to omit any field.
-            const availableProducts = await Product.find({ deleted_at: null });
-            // console.log(availableProducts);
+        // console.log(req.query);
+        if (req.query?.search || !isEmpty(req.query?.search)) productController.searchProducts(req, res);
+        else {
+            try {
+                //find accepts 2 params: first for query(where) and second is for projection to omit any field.
+                const availableProducts = await Product.find({ deleted_at: null });
+                // console.log(availableProducts);
 
-            availableProducts.length ?
-                res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Fetched all products data!!", availableProducts))
-                : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "No product found!!"));
-        } catch (error) {
-            console.log("Product Fetch Error", error.message);
-            res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+                availableProducts.length ?
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Fetched all products data!!", availableProducts))
+                    : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "No product found!!"));
+            } catch (error) {
+                console.log("Product Fetch Error", error.message);
+                res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+            }
         }
     },
 
@@ -69,10 +73,10 @@ const productController = {
                 const foundProductData = await Product.findOne({ $or: [{ _id: req.body._id }, { id: req.body.id }] });
                 if (!foundProductData) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "There is no such product."));
                 else {
-                    //de-structuring req.body fields to remove _id from update.
+                    // de-structuring req.body fields to remove _id from update.
                     const { _id: obj_id, id: p_id, ...withoutIdData } = req.body;
 
-                    // //will give array of product if any of withoutObjIdData field matches in db.
+                    // will give array of product if any of withoutObjIdData field matches in db.
                     // const matchedProductData = await Product.findOne($or);
                     // console.log(matchedProductData, matchedProductData.length);
 
@@ -182,19 +186,45 @@ const productController = {
 
     /**
      * to only search from all product's.
-     * @param {*} req 
-     * @param {*} res 
+     * @param {*} req query params of search string.
+     * @param {*} res sends single or list of product that matches search string, success/error message with quantity and search string and status code.
      */
     searchProducts: async (req, res) => {
         // console.log(Object.keys(req.query).length === 0, req.query.search);
-        if (isEmpty(req.query, req.query.search) || !/^[a-z]+$/i.test(req.query?.search)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Search value is required and only string format is valid."));
+        const search_str = req.query?.search.split(" ")[0];
+        // console.log(search_str);
+        if (isEmpty(req.query, search_str) || !/^[a-z0-9]+$/i.test(search_str)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Search value is required and only type string is valid."));
         else {
             try {
-                const searchedProductsData = await Product.find({ product_name: new RegExp(req.query.search, 'i') });
+                //to match case-insensitive string in product_name using RegExp.
+                const searchedProductsData = await Product.find({ product_name: new RegExp(search_str, 'i') }); //Search Query Method - 2: product_name: { $regex: `${search_str}`, $options: 'i' }
 
                 searchedProductsData.length ?
-                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Found ${searchedProductsData.length} product with ${req.query.search}.`, searchedProductsData))
-                    : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `No results found for ${req.query.search}.`));
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Found ${searchedProductsData.length} product with ${search_str}.`, searchedProductsData))
+                    : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `No results found for ${search_str}.`));
+            } catch (error) {
+                res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+            }
+        }
+    },
+
+    /**
+     * to only search from all product's.
+     * @param {*} req query params of sort and by string.
+     * @param {*} res sends single or list of product as per sorting, success/error message with quantity and sorted by and status code.
+     */
+    sortProducts: async (req, res) => {
+        // de-structuring req.query
+        const { sort, by } = req.query;
+        if (isEmpty(req.query, sort, by) || !/^[a-z0-9_]+$/i.test(sort) || !/^[a-z0-9]+$/i.test(by)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Sort and by value is required and only type string is valid."));
+        else {
+            try {
+                //
+                const sortedProductsData = await Product.find({}).sort({ [sort]: by });
+
+                sortedProductsData.length ?
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Sorted ${sortedProductsData.length} product by ${sort}.`, sortedProductsData))
+                    : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Can't sort for ${sort}.`));
             } catch (error) {
                 res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
             }

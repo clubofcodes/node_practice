@@ -14,7 +14,8 @@ routes.patch('/sold', productController.changeQuantities);
 routes.patch('/addqty', productController.addQty);
 
 // end-ponts for filtering the prodtuct.
-routes.get('/search', productController.searchProducts);
+routes.get('/all', productController.searchProducts);
+routes.get('/sort', productController.sortProducts);
 
 
 // soft delete and hard delete end-points
