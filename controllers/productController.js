@@ -157,6 +157,7 @@ const productController = {
      * @param {*} res sends added quantity product's data with product's name and added qty, success/error message with product_name/qty and status code.
      */
     addQty: async (req, res) => {
+        //de-structuring req.body
         const { _id, id, add_qty } = req.body;
         if ((isEmpty(_id, add_qty) && isEmpty(id, add_qty))) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Enter product id/object_id and add_qty to add product quantity."));
         else {
@@ -169,10 +170,31 @@ const productController = {
                 // to show error message when add_aty value is string or less than 0.
                 else if (add_qty <= 0 || (isNaN(add_qty))) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `${add_qty} quantity can't be added.`));
                 else {
-                    const soldProductData = await Product.findByIdAndUpdate(_id || foundProductData._id, { total_quantity: Number(foundProductData.total_quantity) + add_qty, remaining_quantity: Number(foundProductData.remaining_quantity) + add_qty }, { new: true });
-                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `${add_qty} quantity of ${foundProductData.product_name} added!!`, soldProductData));
+                    const addedQtyProductData = await Product.findByIdAndUpdate(_id || foundProductData._id, { total_quantity: Number(foundProductData.total_quantity) + add_qty, remaining_quantity: Number(foundProductData.remaining_quantity) + add_qty }, { new: true });
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `${add_qty} quantity of ${foundProductData.product_name} added!!`, addedQtyProductData));
                 }
 
+            } catch (error) {
+                res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+            }
+        }
+    },
+
+    /**
+     * to only search from all product's.
+     * @param {*} req 
+     * @param {*} res 
+     */
+    searchProducts: async (req, res) => {
+        // console.log(Object.keys(req.query).length === 0, req.query.search);
+        if (isEmpty(req.query, req.query.search) || !/^[a-z]+$/i.test(req.query?.search)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Search value is required and only string format is valid."));
+        else {
+            try {
+                const searchedProductsData = await Product.find({ product_name: new RegExp(req.query.search, 'i') });
+
+                searchedProductsData.length ?
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Found ${searchedProductsData.length} product with ${req.query.search}.`, searchedProductsData))
+                    : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `No results found for ${req.query.search}.`));
             } catch (error) {
                 res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
             }

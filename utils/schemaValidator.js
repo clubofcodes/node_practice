@@ -11,7 +11,7 @@ const pwdRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,2
  */
 const isEmpty = (...val) => val.some((eachVal) => {
     // console.log(isNaN(eachVal));
-    return isNaN(eachVal) && (eachVal === null || eachVal === undefined || eachVal === '' || eachVal.length === 0)
+    return isNaN(eachVal) && (eachVal === null || eachVal === undefined || eachVal === '' || eachVal.length === 0 || Object.keys(eachVal).length === 0)
 });
 
 /**
