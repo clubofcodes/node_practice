@@ -4,6 +4,8 @@ import responseFunction from "../utils/responseFunction";
 import { isEmpty, isPwdValid } from "../utils/schemaValidator";
 import { securePassword, comparePassword } from "../utils/securePassword";
 import jwt from "jsonwebtoken";
+import sendAMail from "../service/sendAMail";
+import mailOptions from "../utils/mailOptions";
 
 /**
  * 
@@ -13,7 +15,7 @@ import jwt from "jsonwebtoken";
 const signUp = async (req, res) => {
 
     //de-structuring req.body fields.
-    const { first_name, last_name, username, email, password, c_pwd, dob } = req.body;
+    const { first_name, last_name, username, email, password, c_pwd, dob, mail_sub, mail_greet, mail_msg } = req.body;
 
     //to verify empty field.
     if (isEmpty(first_name, last_name, username, email, password, c_pwd, dob)) {
@@ -36,6 +38,9 @@ const signUp = async (req, res) => {
                 const newUserData = new User({ first_name, last_name, username, email, password: await securePassword(password), dob });
 
                 await newUserData.save();
+
+                // service call to send mail and passed mailOptions as argument from utils.
+                await sendAMail(mailOptions(email, mail_sub, mail_greet, first_name, last_name, mail_msg));
 
                 const { password: hiddenPwd, ...withoutPwdUserData } = newUserData._doc;
 
@@ -72,7 +77,7 @@ const signIn = async (req, res) => {
 
                     // to share security information between two parties — a client and a server.
                     // generates the token string madeup of 3 parts(header, payload, Key)
-                    const jwtToken = jwt.sign({_id: loggedInUser._id}, JWT_KEY);
+                    const jwtToken = jwt.sign({ _id: loggedInUser._id }, JWT_KEY);
                     // console.log(jwtToken);
 
                     // passes token to header.

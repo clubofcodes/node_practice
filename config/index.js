@@ -25,4 +25,31 @@ export const schema_configs = {
 //Server response status code object.
 export const status_codes = { ok: 200, bad: 400, auth: 401 };
 
-export const JWT_KEY = process.env.SECRET_KEY
+//Secret string for jwt.
+export const JWT_KEY = process.env.SECRET_KEY;
+
+//Settings to send messages directly from your email client or mail transfer agent.
+//SMTP (Simple Mail Transfer Protocol) is used to send emails between various servers over internet.
+//SMTP Server - 1 (Dummy mail testing server/add-on)
+export const mailtrap_configs = {
+    host: "smtp.mailtrap.io",
+    port: 2525,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: process.env.MAIL_USER, // generated ethereal user.
+        pass: process.env.MAIL_PWD // generated ethereal password.
+    }
+}
+
+//SMTP Server - 2 (Via google gmail server)
+export const gmail_configs = {
+    host: "smtp.gmail.com", //it’s an IP address/hostname for connecting to (by default to ‘localhost’)
+    port: 465, //465 is for only secure true.
+    secure: true, //if secure is false port uses 587 by default, and 465 if true.
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PWD
+    }
+}
+
+export const from_mail_id = process.env.GMAIL_USER;
