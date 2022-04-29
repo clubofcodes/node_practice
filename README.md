@@ -12,3 +12,4 @@ Code of day to day work in nodejs.
 - MAIL: Send mail during registration using nodemailer and multiple smtp server.
 - PRODUCT: CRUD, managed quantities & count of sold and remaining product and filtering product.
 - USER_ROLE: Authorizes the APIs to end-user as per role (i.e., Customer or Admin for now).
+- ORDER: Added pivot table for placing orders, listing and cancelling using mongoose populate method.
