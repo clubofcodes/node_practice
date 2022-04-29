@@ -9,7 +9,7 @@
 - Listing of all products with other CRUD operations in product branch. Even remaining and sold out quantity of product.
 - User_role branch manages the login route for admin and customer.
 - Implementing orders related APIs in order branch.
-- FAV branch contains list of products added by user as a wishlist to buy later.
+- FAV branch contains managing and listing of products added by user as a wishlist to buy later.
 
 ## Features
 
