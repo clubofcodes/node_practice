@@ -70,6 +70,38 @@ const orderController = {
             }
         }
     },
+
+    /**
+     * @param {*} req to get product id (i.e., p_id) from body.
+     * @param {*} res sends canceled order data, success/error message and status code.
+     */
+    cancelOrder: async (req, res) => {
+
+        //de-structuring req.body fields.
+        const { p_id } = req.body;
+
+        //to verify empty field.
+        if (isEmpty(p_id)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Product id is required."));
+        else {
+
+            try {
+                const findProductOrder = await Order.findOne({ p_id });
+                console.log(findProductOrder);
+
+                if (!findProductOrder || !findProductOrder?.p_id) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Can't find order with that product."))
+                else {
+                    //to delete order from db.
+                    findProductOrder.p_id = null;
+                    findProductOrder.save();
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Order added successfully!!", findProductOrder));
+                }
+
+            } catch (error) {
+                console.log("Add Order Error", error.message);
+                res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
+            }
+        }
+    },
 }
 
 export default orderController;
