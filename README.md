@@ -9,5 +9,6 @@ Code of day to day work in nodejs.
 - CRUD: Contains basic crud operation on user schema in mongodb collection.
 - STORE_INFO: Sessions and cookies demo.
 - AUTH: Added password field for Authorization in add user.
-- Mail: Send mail during registration using nodemailer and multiple smtp server.
-- Product: CRUD, managed quantities & count of sold and remaining product and filtering product.
+- MAIL: Send mail during registration using nodemailer and multiple smtp server.
+- PRODUCT: CRUD, managed quantities & count of sold and remaining product and filtering product.
+- USER_ROLE: Authorizes the APIs to end-user as per role (i.e., Customer or Admin for now).
