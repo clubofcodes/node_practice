@@ -23,6 +23,9 @@ const userSchema = Schema({
         lowercase: true,
         match: [/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*(\.\w{2,64})+$/, 'Please enter a valid email address!!']
     },
+    password: {
+        ...schema_configs.basic_validators,
+    },
     dob: {
         ...schema_configs.basic_validators,
         // validate: {

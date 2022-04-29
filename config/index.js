@@ -23,4 +23,6 @@ export const schema_configs = {
 }
 
 //Server response status code object.
-export const status_codes = { ok: 200, bad: 400 };
+export const status_codes = { ok: 200, bad: 400, auth: 401 };
+
+export const JWT_KEY = process.env.SECRET_KEY

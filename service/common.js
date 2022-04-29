@@ -1,3 +1,5 @@
+import responseFunction from "../utils/responseFunction"
+
 /**
  * function to update data.
  * @param {*} model mongodb collection schem object.
@@ -9,12 +11,13 @@
  * @param {*} msg specific msg to send in response.
  * Author: Rahul Jagetia
  */
- export const find_Update = (model, id, field_key, value, res, code, msg) => {
+export const find_Update = (model, id, field_key, value, res, code, msg) => {
 
-    model.findByIdAndUpdate(id, { [field_key]: value }, { new: true }, (err, data) => {
-        err ? res.status(code.bad).send({ status_code: code.bad, error: err }) :
-            data ?
-                res.status(code.ok).send({ status_code: code.ok, message: msg.ok, data: data }) :
-                res.status(code.bad).send({ status_code: code.ok, message: msg.err })
-    });
+    model.findByIdAndUpdate(id, { [field_key]: value }, { new: true, select: { password: 0 } }, (error, data) => {
+
+        error ? res.status(code.bad).send(responseFunction(true, code.bad, error)) :
+            data && res.status(code.ok).send(responseFunction(false, code.ok, msg.ok, data))
+
+    })
+    // .select({ password: 0 }); //Method - 2
 }
