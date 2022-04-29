@@ -17,7 +17,7 @@ const orderController = {
                 res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Fetched all orders!!", orderedData))
                 : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "No orders found!!"));
         } catch (error) {
-            console.log("Order Fetch Error", error.message);
+            console.log("All Order Fetch Error", error.message);
             res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
         }
     },
@@ -33,7 +33,7 @@ const orderController = {
         else {
             try {
                 const userOrderedData = await Order.findOne({ u_id: req.body.u_id }).populate("u_id").populate("p_id"); //or .populate("u_id p_id")
-                console.log(userOrderedData);
+                // console.log(userOrderedData);
 
                 !userOrderedData?.u_id || !userOrderedData ?
                     res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "User doesn't exist!!"))
@@ -41,7 +41,7 @@ const orderController = {
                         res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "No orders found!!"))
                         : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `Fetched orders of ${userOrderedData.u_id?.username}`, userOrderedData));
             } catch (error) {
-                console.log("Order Fetch Error", error.message);
+                console.log("UserWise Order Fetch Error", error.message);
                 res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
             }
         }
@@ -61,9 +61,17 @@ const orderController = {
         else {
 
             try {
-                const newOrderData = await Order.create({ p_id, u_id });
+                // to find user exists.
+                const foundUserData = await Order.findOne({ u_id });
 
-                res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Order added successfully!!", newOrderData));
+                if (foundUserData) {
+                    const updateOrderData = await Order.findByIdAndUpdate(foundUserData._id, { p_id }, { new: true }).populate("p_id u_id");
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Order added successfully!!", updateOrderData));
+                } else {
+                    const newOrderData = await Order.create({ p_id, u_id });
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Order added successfully!!", newOrderData));
+                }
+
             } catch (error) {
                 console.log("Add Order Error", error.message);
                 res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
@@ -78,26 +86,26 @@ const orderController = {
     cancelOrder: async (req, res) => {
 
         //de-structuring req.body fields.
-        const { p_id } = req.body;
+        const { u_id, p_id } = req.body;
 
         //to verify empty field.
-        if (isEmpty(p_id)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Product id is required."));
+        if (isEmpty(u_id, p_id)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Both user and product id are required."));
         else {
 
             try {
-                const findProductOrder = await Order.findOne({ p_id });
-                console.log(findProductOrder);
+                const findProductOrder = await Order.findOne({ $and: [{ u_id }, { p_id }] });
+                // console.log(findProductOrder);
 
                 if (!findProductOrder || !findProductOrder?.p_id) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Can't find order with that product."))
                 else {
                     //to delete order from db.
                     findProductOrder.p_id = null;
                     findProductOrder.save();
-                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Order added successfully!!", findProductOrder));
+                    res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Order cancelled successfully!!", findProductOrder));
                 }
 
             } catch (error) {
-                console.log("Add Order Error", error.message);
+                console.log("Cancel Order Error", error.message);
                 res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, error.message));
             }
         }
