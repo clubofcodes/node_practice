@@ -6,6 +6,6 @@ const routes = express.Router();
 routes.get('/all', favController.getFavourites);
 routes.get('/one', favController.getUserFav);
 routes.post('/add', favController.addFavourites);
-routes.post('/delete', favController.deleteFav);
+routes.delete('/delete', favController.deleteFav);
 
 export default routes;

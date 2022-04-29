@@ -13,7 +13,7 @@ const orderController = {
         try {
             const orderedData = await Order.find({});
 
-            orderedData ?
+            orderedData.length ?
                 res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "Fetched all orders!!", orderedData))
                 : res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, "No orders found!!"));
         } catch (error) {
