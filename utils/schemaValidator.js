@@ -4,12 +4,15 @@ const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0
 const pwdRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,20}$/;
 
 /**
- * to verify the argument value is null, undefined, empty or length is 0 then true else false.
- * @param  {...any} val multiple parameters which will be variables.
+ * to verify the argument value/string is null, undefined, empty or length is 0 then true else false.
+ * @param  {...any} val multiple parameters which are string variables.
  * @returns boolean value.
  * Author: Rahul Jagetia.
  */
-const isEmpty = (...val) => val.some((eachVal) => (eachVal === null || eachVal === undefined || eachVal === '' || eachVal.length === 0));
+const isEmpty = (...val) => val.some((eachVal) => {
+    // console.log(isNaN(eachVal));
+    return isNaN(eachVal) && (eachVal === null || eachVal === undefined || eachVal === '' || eachVal.length === 0 || Object.keys(eachVal).length === 0)
+});
 
 /**
  * to verify that user email address must contains any of this:

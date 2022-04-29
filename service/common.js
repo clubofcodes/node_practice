@@ -12,7 +12,9 @@ import responseFunction from "../utils/responseFunction"
  * Author: Rahul Jagetia
  */
 export const find_Update = (model, id, field_key, value, res, code, msg) => {
+// export const find_Update = async (model, id, updateData) => {
 
+    //for user APIs.
     model.findByIdAndUpdate(id, { [field_key]: value }, { new: true, select: { password: 0 } }, (error, data) => {
 
         error ? res.status(code.bad).send(responseFunction(true, code.bad, error)) :
@@ -20,4 +22,7 @@ export const find_Update = (model, id, field_key, value, res, code, msg) => {
 
     })
     // .select({ password: 0 }); //Method - 2
+
+    //for product APIs.
+    // return await model.findByIdAndUpdate(id, updateData, { new: true });
 }
