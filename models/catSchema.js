@@ -7,6 +7,7 @@ import { schema_configs } from "../config";
 const favSchema = Schema({
     cat_name: {
         ...schema_configs.basic_validators,
+        unique: true
     },
     deleted_at: {
         type: Date,

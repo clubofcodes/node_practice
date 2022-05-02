@@ -19,6 +19,6 @@ routes.use("/order", orderRouter.default);
 //common endpoint for favourite product related all APIs.
 routes.use("/favourite", favRouter.default);
 //common endpoint for product category related all APIs.
-routes.use("/favourite", catRouter.default);
+routes.use("/category", catRouter.default);
 
 export default routes;
