@@ -4,6 +4,7 @@ import * as authRouter from "./authRoute";
 import * as productRouter from "./productRoute";
 import * as orderRouter from "./orderRoute";
 import * as favRouter from "./favRoute";
+import * as catRouter from "./catRoute";
 
 const routes = express.Router();
 
@@ -17,5 +18,7 @@ routes.use("/product", productRouter.default);
 routes.use("/order", orderRouter.default);
 //common endpoint for favourite product related all APIs.
 routes.use("/favourite", favRouter.default);
+//common endpoint for product category related all APIs.
+routes.use("/category", catRouter.default);
 
 export default routes;

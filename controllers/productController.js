@@ -16,7 +16,7 @@ const productController = {
         else {
             try {
                 //find accepts 2 params: first for query(where) and second is for projection to omit any field.
-                const availableProducts = await Product.find({ deleted_at: null });
+                const availableProducts = await Product.find({ $and: [{ deleted_at: null }, { cat_name_id: { $ne: null } }] });
                 // console.log(availableProducts);
 
                 availableProducts.length ?
@@ -36,10 +36,10 @@ const productController = {
     addProduct: async (req, res) => {
 
         //de-structuring req.body fields.
-        const { id, product_name, description, price, weight, size, discount_percentage, brand_name, total_quantity, product_origin } = req.body;
+        const { id, product_name, description, price, weight, size, discount_percentage, brand_name, cat_name_id, total_quantity, product_origin } = req.body;
 
         //to verify empty field.
-        if (isEmpty(id, product_name, description, price, weight, size, discount_percentage, brand_name, total_quantity, product_origin)) {
+        if (isEmpty(id, product_name, description, price, weight, size, discount_percentage, brand_name, cat_name_id, total_quantity, product_origin)) {
             res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Fill all the details."));
         } else {
 

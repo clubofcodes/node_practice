@@ -6,9 +6,9 @@ import { Schema, model } from "mongoose";
 const favSchema = Schema({
     u_id: {
         type: Schema.Types.ObjectId,
-        unique:true,
+        unique: true,
         ref: 'User'
-    }, 
+    },
     p_id: {
         type: Schema.Types.ObjectId,
         ref: 'Product'
