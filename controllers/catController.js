@@ -3,6 +3,7 @@ import { status_codes } from "../config";
 import responseFunction from "../utils/responseFunction";
 import { isEmpty } from "../utils/schemaValidator";
 import { calc } from "../utils/calculation";
+import Product from "../models/productSchema";
 
 const catController = {
     /**
@@ -34,7 +35,7 @@ const catController = {
         const { cat_name } = req.body;
 
         //to verify empty field.
-        if (isEmpty(cat_name) || !/^[a-z]{3,50}$/i.test(cat_name)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Category name is required, minimum 3 character long and only alphabets."));
+        if (isEmpty(cat_name) || !/^[a-z ]{3,50}$/i.test(cat_name)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Category name is required, minimum 3 character long and only alphabets."));
         else {
 
             try {
@@ -64,7 +65,7 @@ const catController = {
         const { _id, cat_name } = req.body;
 
         //to verify empty field.
-        if (isEmpty(_id, cat_name) || !/^[a-z]{3,50}$/i.test(cat_name)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Category name is required, minimum 3 character long and only alphabets."));
+        if (isEmpty(_id, cat_name) || !/^[a-z ]{3,50}$/i.test(cat_name)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Category name is required, minimum 3 character long and only alphabets."));
         else {
 
             try {
@@ -94,7 +95,7 @@ const catController = {
         const { cat_name } = req.body;
 
         //to verify empty field.
-        if (isEmpty(cat_name) || !/^[a-z]{3,50}$/i.test(cat_name)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Category name is required, minimum 3 character long and only alphabets."));
+        if (isEmpty(cat_name) || !/^[a-z ]{3,50}$/i.test(cat_name)) res.status(status_codes.bad).send(responseFunction(true, status_codes.bad, "Category name is required, minimum 3 character long and only alphabets."));
         else {
 
             try {
@@ -102,7 +103,15 @@ const catController = {
 
                 if (!findCategoryName) res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `${cat_name} category is removed or doesn't exists.`))
                 else {
-                    await Cat.findOneAndUpdate({ cat_name }, { deleted_at: calc.currentTimeStamp() });
+                    const removedCategoryData = await Cat.findOneAndUpdate({ cat_name }, { deleted_at: calc.currentTimeStamp() }, { new: true });
+
+                    if (removedCategoryData.deleted_at) {
+                        const categoryProductData = await Product.find({ cat_name_id: { $exists: true, $eq: findCategoryName?._id } });
+                        //to remove products of cat_name from db.
+                        (categoryProductData.length) &&
+                            await Product.updateMany({ cat_name_id: { $exists: true, $eq: findCategoryName?._id }, deleted_at: null }, { deleted_at: calc.currentTimeStamp() });
+                    }
+
                     res.status(status_codes.ok).send(responseFunction(false, status_codes.ok, `${cat_name} category is Removed!!`));
                 }
 

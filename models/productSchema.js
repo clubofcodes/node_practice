@@ -36,6 +36,10 @@ const productSchema = Schema({
     brand_name: {
         ...schema_configs.basic_validators,
     },
+    cat_name_id: {
+        type: Schema.Types.ObjectId,
+        ref: "Category"
+    },
     total_quantity: {
         type: Number,
         ...schema_configs.basic_validators
